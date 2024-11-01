@@ -34,7 +34,6 @@ public class AnswerController {
               @RequestParam("imageData") MultipartFile imageFile,
               @RequestParam("studentId") Long studentId,
               @RequestParam("problemId") Long problemId) throws IOException {
-
                Answer answer = new Answer();
                 answer.setImageData(imageFile.getBytes()); // Convert image file to byte array
               Student student = studentService.findById(studentId).orElseThrow();
