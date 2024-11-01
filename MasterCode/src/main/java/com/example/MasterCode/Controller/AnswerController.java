@@ -58,7 +58,6 @@ public class AnswerController {
     public String delete(@PathVariable Long problemid,@PathVariable Long studentid){
         Problem problem = problemService.findById(problemid).orElse(null);
         Student student=studentService.findById(studentid).orElse(null);
-
           return answerService.delete(problem,student);
     }
 
