@@ -29,4 +29,9 @@ public class StudentService {
     {
         return studentRepository.findUser(user);
     }
+    public String updatePassword(String user,String password)
+    {
+        studentRepository.updatePassword(user,password);
+        return "Updated";
+    }
 }

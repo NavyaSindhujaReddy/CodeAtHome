@@ -43,4 +43,9 @@ public class StudentController {
     public int noOfProblems (@PathVariable Long studentid){
         return studentService.noOfProblems(studentid);
     }
+    @PostMapping("/update/{user}/{password}")
+    public String updatePassword(@PathVariable String user,@PathVariable String password)
+    {
+        return studentService.updatePassword(user,password);
+    }
 }
