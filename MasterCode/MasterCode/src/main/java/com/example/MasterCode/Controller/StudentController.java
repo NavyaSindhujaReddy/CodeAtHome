@@ -29,11 +29,10 @@ public class StudentController {
     @GetMapping("/login/{user}/{pass}")
     public String verifyUser(@PathVariable String user,@PathVariable String pass)
     {
-
-        String s=studentService.findUser(user);
-        if(s.equals(""))
+        Student s=studentService.findUser(user);
+        if(s==null)
             return "User Not Found";
-        if(s.equals(pass))
+        if(s.getPassword().equals(pass))
         {
             return "Success";
         }
@@ -46,6 +45,9 @@ public class StudentController {
     @PostMapping("/update/{user}/{password}")
     public String updatePassword(@PathVariable String user,@PathVariable String password)
     {
+        Student s=studentService.findUser(user);
+        if(s==null)
+            return "No User";
         return studentService.updatePassword(user,password);
     }
 }

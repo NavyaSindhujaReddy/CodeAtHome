@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 public interface StudentRepository extends JpaRepository<Student,Long> {
     @Query("select count from Student  S  where S.studentId=:id")
     public int noOfProblems(Long id);
-    @Query("Select password from Student s where s.rollno=:user")
-    public String findUser(String user);
+    @Query("Select s from Student s where s.rollno=:user")
+    public Student findUser(String user);
     @Modifying
     @Transactional
     @Query("UPDATE Student s SET s.password = :password WHERE s.rollno = :user")

@@ -25,7 +25,7 @@ public class StudentService {
     public int noOfProblems(Long studentid){
         return studentRepository.noOfProblems(studentid);
     }
-    public String findUser(String user)
+    public Student findUser(String user)
     {
         return studentRepository.findUser(user);
     }
