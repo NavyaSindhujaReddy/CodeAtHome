@@ -2,6 +2,7 @@ package com.example.MasterCode.Service;
 
 import com.example.MasterCode.Model.Answer;
 import com.example.MasterCode.Model.Problem;
+import com.example.MasterCode.Model.Student;
 import com.example.MasterCode.Repository.AnswerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,10 @@ public class AnswerService {
     }
     public List<Answer> findAll(){
         return answerRepository.findAll();
+    }
+    public String delete(Problem problem, Student student){
+        answerRepository.deleteAnswer(problem,student);
+        return "Deleted";
     }
 
 }

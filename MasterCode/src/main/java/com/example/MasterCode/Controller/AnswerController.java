@@ -47,13 +47,19 @@ public class AnswerController {
        }
     @GetMapping("/{problemId}/answers")
     public List<Answer>  getAnswers(@PathVariable Long problemId) {
-
         Problem problem = problemService.findById(problemId).orElse(null);
         return answerService.findByProblem(problem);
     }
     @GetMapping("/")
     public List<Answer> allAnswers(){
            return answerService.findAll();
+    }
+    @DeleteMapping("/delete/{problemid}/{studentid}")
+    public String delete(@PathVariable Long problemid,@PathVariable Long studentid){
+        Problem problem = problemService.findById(problemid).orElse(null);
+        Student student=studentService.findById(studentid).orElse(null);
+
+          return answerService.delete(problem,student);
     }
 
 }

@@ -31,4 +31,20 @@ public class StudentController {
     public int noOfProblems (@PathVariable Long studentid){
         return studentService.noOfProblems(studentid);
     }
+    @GetMapping("/login/{user}/{pass}")
+    public String verifyUser(@PathVariable String user,@PathVariable String pass) {
+
+        String s = studentService.findUser(user);
+        if (s.equals(""))
+            return "User Not Found";
+        if (s.equals(pass)) {
+            return "Success";
+        }
+        return "Invaid Password";
+    }
+    @PostMapping("/updatePassword/{rollno}/{password}")
+    public String updatePassword(@PathVariable String rollno,@PathVariable String password){
+        System.out.println(password);
+        return studentService.updatePassword(rollno,password);
+    }
 }

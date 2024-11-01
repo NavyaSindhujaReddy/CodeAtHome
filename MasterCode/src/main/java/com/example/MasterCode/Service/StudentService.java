@@ -25,4 +25,16 @@ public class StudentService {
     public int noOfProblems(Long studentid){
         return studentRepository.noOfProblems(studentid);
     }
+    public String findUser(String user){
+        Student student=studentRepository.findUser(user);
+        return student.getPassword();
+    }
+    public String updatePassword(String rollno,String password){
+        Student s=studentRepository.findUser(rollno);
+        if(s==null){
+            return "No user";
+        }
+        studentRepository.updatePassword(rollno,password);
+        return "updated";
+    }
 }
