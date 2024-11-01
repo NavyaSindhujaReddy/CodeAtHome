@@ -32,7 +32,7 @@ public class StudentService {
     public String updatePassword(String rollno,String password){
         Student s=studentRepository.findUser(rollno);
         if(s==null){
-            return "No user";
+            return "No user1";
         }
         studentRepository.updatePassword(rollno,password);
         return "updated";
