@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface StudentRepository extends JpaRepository<Student,Long> {
     @Query("select count from Student  S  where S.studentId=:id")
     public int noOfProblems(Long id);
+    @Query("Select password from Student s where s.rollno=:user")
+    public String findUser(String user);
 }

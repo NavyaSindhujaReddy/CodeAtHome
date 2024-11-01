@@ -21,6 +21,9 @@ public class ProblemService {
     }
     public Optional<Problem> findById(Long id){
         return problemRepository.findById(id);
-
+    }
+    public void deleteProblem(Long id)
+    {
+        problemRepository.deleteById(id);
     }
 }

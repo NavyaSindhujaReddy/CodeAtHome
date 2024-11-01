@@ -22,5 +22,10 @@ public class ProblemController {
     public String addProblem(@RequestBody Problem problem){
        return  problemService.saveProblem(problem);
     }
-
+    @DeleteMapping("/deleteproblem/{id}")
+    public String deleteProblem(@PathVariable Long id)
+    {
+        problemService.deleteProblem(id);
+        return "Deleted";
+    }
 }

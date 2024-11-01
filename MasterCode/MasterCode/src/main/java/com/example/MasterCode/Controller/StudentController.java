@@ -25,7 +25,19 @@ public class StudentController {
     @PostMapping("/add")
     public String addStudent(@RequestBody Student student) {
         return studentService.add(student);
+    }
+    @GetMapping("/login/{user}/{pass}")
+    public String verifyUser(@PathVariable String user,@PathVariable String pass)
+    {
 
+        String s=studentService.findUser(user);
+        if(s.equals(""))
+            return "User Not Found";
+        if(s.equals(pass))
+        {
+            return "Success";
+        }
+        return "Invaid Password";
     }
     @GetMapping("/count/{studentid}")
     public int noOfProblems (@PathVariable Long studentid){
