@@ -9,15 +9,12 @@ public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long answer_id;
-
     @Lob
-    private byte[] imageData; // Store image data directly in the database
-
-    @ManyToOne // Many answers can belong to one user
-    @JoinColumn(name = "student_id", nullable = false) // Foreign key
-    private Student student; // Reference to the user who submitted the answer
-    @ManyToOne // Many answers can belong to one problem
-    @JoinColumn(name = "problem_id", nullable = false) // Foreign key
-    private Problem problem; // Reference to the associated problem
-
+    private byte[] imageData;
+    @ManyToOne
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
+    @ManyToOne
+    @JoinColumn(name = "problem_id", nullable = false)
+    private Problem problem;
 }

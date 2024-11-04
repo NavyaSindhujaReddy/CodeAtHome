@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <Title>Teacher View Page</Title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    .add-problem-form {
+       display: none; /* Hidden by default */
+       margin: 20px 0;
+       padding: 10px;
+       border: 1px solid #ddd;
+       width: 100%;
+   }
+
+   .add-problem-form input,
+   .add-problem-form button {
+       padding: 8px;
+       margin: 5px 0;
+       width: calc(100% - 20px);
+       font-size: 14px;
+
+   }
+   .add-problem-form button{
+    background-color:#006098;
+    }
+   .allproblembutton {
+      display: flex;
+      justify-content: flex-end; /* Aligns buttons to the left */
+      margin-left: 0; /* Removes any default left margin */
+      padding: 10px; /* Adds some padding */
+  }
+
+  .allproblembutton button {
+      margin-right: 10px; /* Adds space between buttons */
+      padding: 10px 20px; /* Adjust button padding for better appearance */
+      font-size: 16px;
+      background-color: #006098; /* Button color */
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+  }
+
+  .buttonleft button:hover {
+      background-color: #009879; /* Darker shade on hover */
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    margin: 20px 0;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  thead tr {
+    background-color:#006098;
+    color: #ffffff;
+    text-align: left;
+  }
+
+  th, td {
+    padding: 12px 15px;
+    border: 1px solid #dddddd;
+  }
+
+  tbody tr {
+    background-color: #f3f3f3;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #e9e9e9;
+  }
+
+  tbody tr:hover {
+    background-color: #d1d1d1;
+  }
+
+  a {
+    color: #004798;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+
+  .tab {
+overflow: hidden;
+border: 1px solid #ccc;
+
+}
+
+
+
+/* Style the buttons inside the tab */
+.tab button {
+background-color: #006f98;
+float: left;
+border: none;
+outline: none;
+cursor: pointer;
+padding: 14px 16px;
+transition: 0.3s;
+font-size: 17px;
+width: 25%;
+text-align: center;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+background-color:#009886;
+}
+/* Ensure the active tab has a different color if needed */
+.tab button.active {
+background-color: #008b98; /* This is the active tab color */
+}
+/* Create an active/current tablink class */
+
+
+/* Style the tab content */
+.tabcontent {
+display: none;
+padding: 6px 12px;
+border: 1px solid #ccc;
+border-top: none;
+}
+
+/* Style for table */
+table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 20px;
+}
+
+table, th, td {
+border: 1px solid black;
+padding: 8px;
+text-align: left;
+}
+
+
+
+   #problemsTable {
+       display: none;
+   }
+  </style>
+</head>
+<body>
+<div class="allproblembutton">
+  <button onclick="toggleTable()">All Problems</button>
+  <button onclick="displayAddProblemForm()">Add</button>
+</div>
+<div class="add-problem-form" id="addProblemForm">
+  <h3>Add a New Problem</h3>
+  <input type="text" id="problemdescription" placeholder="Problem Title" required />
+  <input type="text" id="link" placeholder="Link" required />
+  <button onclick="addProblem()">Submit</button>
+</div>
+<table id="problemsTable">
+  <thead>
+  <tr>
+    <th>Title</th>
+    <th>Link</th>
+    <th>Action</th>
+  </tr>
+  </thead>
+  <tbody id="problemsTableBody">
+  <!-- Rows will be added dynamically here -->
+  </tbody>
+</table>
+
+<script>
+  // Toggle table visibility and fetch data when shown
+  function toggleTable() {
+      const table = document.getElementById("problemsTable");
+       const answersSection = document.getElementById("answersSection"); // Get answers section
+      if (table.style.display === "none") {
+          table.style.display = "table";
+           answersSection.style.display = "none";
+          fetchProblems(); // Fetch data when the table is first shown
+      } else {
+          table.style.display = "none";
+      }
+  }
+
+
+
+  // Fetch problems data from the backend and populate the table
+  function fetchProblems() {
+      fetch('/problem/')
+          .then(response => response.json())
+          .then(data => {
+              const tableBody = document.getElementById("problemsTableBody");
+              tableBody.innerHTML = ''; // Clear any existing rows
+
+              data.forEach(problem => {
+                  const row = document.createElement("tr");
+
+                  row.innerHTML = `
+                      <td>${problem.description}</td>
+                      <td><a href="${problem.link}" target="_blank">Link</a></td>
+                      <td>
+                        <i class="fas fa-trash" style="cursor: pointer; color: red;" onclick="deleteProblem(${problem.problem_id})" title="Delete Problem"></i>
+                     </td>
+                  `;
+
+                  tableBody.appendChild(row);
+              });
+          })
+          .catch(error => console.error('Error fetching problems:', error));
+  }
+
+
+
+
+ function deleteProblem(problemId) {
+  console.log(`Deleting Problem ID: ${problemId}`); // Log the ID being deleted
+  if (!problemId || isNaN(problemId)) {
+      alert('Invalid Problem ID');
+      return;
+  }
+
+  fetch(`/problem/delete/${problemId}`, {
+      method: 'DELETE',
+  })
+   .then(response => {
+      if (response.ok) {
+          alert(`Problem with ID ${problemId} deleted successfully.`);
+      } else {
+          alert(`Error deleting problem: ${response.statusText}`);
+      }
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+
+
+
+
+function displayAddProblemForm() {
+  const addProblemForm = document.getElementById("addProblemForm");
+  const studentsTable = document.getElementById("studentsTable");
+  const problemsTable = document.getElementById("problemsTable");
+   const answersSection = document.getElementById("answersSection"); // Get answers section
+  // Toggle the form visibility
+  if (addProblemForm.style.display === "block") {
+      // Hide the form if it's already visible
+      addProblemForm.style.display = "none";
+  } else {
+      // Show the form and hide other sections
+      addProblemForm.style.display = "block";
+      studentsTable.style.display = "none";
+      problemsTable.style.display = "none";
+      answersSection.style.display = "none";
+  }
+}
+
+
+      // Function to send a POST request to add a new problem
+      function addProblem() {
+          const description = document.getElementById("problemdescription").value;
+          const link = document.getElementById("link").value;
+
+          if (!description || !link) {
+              alert("Please fill out all fields.");
+              return;
+          }
+          const problemData = {
+              description: description,
+              link: link
+          };
+
+          fetch('/problem/add', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(problemData)
+          })
+          .then(response => {
+              alert("success");// Assuming the backend returns a success message
+              document.getElementById("addProblemForm").style.display = 'none'; // Hides the form
+          })
+
+      }
+  function viewAnswers(problemId) {
+  const answersSection = document.getElementById("answersSection");
+  const problemIdDisplay = document.getElementById("problemIdDisplay");
+  const answersTableBody = document.getElementById("answersTableBody");
+
+  // Clear previous answers
+  answersTableBody.innerHTML = '';
+
+  // Set the problem ID display
+  problemIdDisplay.innerText = problemId;
+
+  // Fetch answers for the specific problem
+  fetch(`/problem/${problemId}/answers`)
+      .then(response => {
+          if (!response.ok) {
+              throw new Error("Failed to fetch answers");
+          }
+          return response.json();
+      })
+      .then(answers => {
+          // Populate the answers table
+          answers.forEach(answer => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                  <td>${answer.id}</td>
+                  <td>${answer.content}</td>
+                  <td>${answer.submittedBy}</td>
+              `;
+              answersTableBody.appendChild(row);
+          });
+
+          // Show the answers section
+          answersSection.style.display = "block";
+      })
+      .catch(error => {
+          console.error('Error fetching answers:', error);
+          alert("Failed to fetch answers.");
+      });
+}
+
+
+
+
+
+function openSection(evt, section) {
+// Hide all tabcontent
+var tabcontent = document.getElementsByClassName("tabcontent");
+for (var i = 0; i < tabcontent.length; i++) {
+  tabcontent[i].style.display = "none";
+}
+
+// Remove "active" class from all buttons
+var tablinks = document.getElementsByClassName("tablinks");
+for (var i = 0; i < tablinks.length; i++) {
+  tablinks[i].classList.remove("active");
+}
+
+// Show the selected tab and add "active" class to the button
+document.getElementById("sectionContent").style.display = "block";
+evt.currentTarget.classList.add("active");
+ const answersSection = document.getElementById("answersSection");
+  answersSection.style.display = "none";
+// Fetch students based on selected section
+fetchStudentsBySection(section);
+}
+
+function fetchStudentsBySection(section) {
+console.log("entered1");
+fetch(`/student/section/${section}`)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(students => {
+    // Sort students by problem count in descending order
+    students.sort((a, b) => b.count - a.count);
+
+    // Assign ranks
+    students.forEach((student, index) => {
+      student.rank = index + 1; // Rank starts from 1
+    });
+
+    const studentsTableBody = document.getElementById("studentsTableBody");
+    studentsTableBody.innerHTML = ''; // Clear existing rows
+
+    students.forEach(student => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${student.rollno}</td>
+        <td>${student.count}</td>
+        <td>${student.rank}</td>
+        <td><a href="#" onclick="viewAnswersByRollno('${student.rollno}', event)">View</a></td>
+      `;
+      studentsTableBody.appendChild(row);
+    });
+  })
+  .catch(error => {
+    console.error('Error fetching students:', error);
+  });
+  }
+
+
+
+
+
+  function viewAnswersByRollno(rollno) {
+  console.log("Fetching answers for rollno:", rollno);
+  fetch(`/student/${rollno}/answers`)
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          return response.json();
+      })
+      .then(answers => {
+          console.log('Fetched answers:', answers); // Log the answers for verification
+          displayAnswers(answers);
+      })
+      .catch(error => {
+          console.error('Error fetching answers:', error);
+      });
+}
+
+
+function displayAnswers(answers) {
+  const answersSection = document.getElementById("answersSection");
+  const answersTableBody = document.getElementById("answersTableBody");
+
+  // Ensure the answers section is visible
+  answersSection.style.display = 'block';
+  answersTableBody.innerHTML = ''; // Clear previous answers
+
+  if (answers.length === 0) {
+      answersTableBody.innerHTML = '<tr><td colspan="2">No answers available for this student.</td></tr>';
+      return;
+  }
+
+  // Populate the table with answers
+  answers.forEach(answer => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+          <td>${answer.problem.problem_id}</td>
+          <td><img src="data:image/jpeg;base64,${answer.imageData}" alt="Answer Image" style="max-width: 200px; max-height: 150px;" /></td>
+      `;
+      answersTableBody.appendChild(row);
+  });
+}
+
+
+
+
+
+
+</script>
+<div id="answersSection" style="display: none;">
+  <h3>Answers for Problem <span id="problemIdDisplay"></span></h3>
+  <table id="answersTable">
+    <thead>
+    <tr>
+      <th>ProblemId</th>
+      <th>Content</th>
+    </tr>
+    </thead>
+    <tbody id="answersTableBody">
+    <!-- Answers will be added dynamically here -->
+    </tbody>
+  </table>
+</div>
+<div class="tab">
+  <button class="tablinks" onclick="openSection(event, 'A')">A</button>
+  <button class="tablinks" onclick="openSection(event, 'B')">B</button>
+  <button class="tablinks" onclick="openSection(event, 'C')">C</button>
+  <button class="tablinks" onclick="openSection(event, 'D')">D</button>
+</div>
+<div id="sectionContent" class="tabcontent">
+  <h3>Students</h3>
+  <table>
+    <thead>
+    <tr>
+      <th>Roll No</th>
+      <th>Problem Count</th>
+      <th>Rank</th>
+      <th>View</th>
+    </tr>
+    </thead>
+    <tbody id="studentsTableBody">
+    <!-- Student data will be populated here -->
+    </tbody>
+  </table>
+</div>
+
+</body>

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Login Page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    body {
+      background-image: url('/back.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      font-family: 'Lato', sans-serif;
+    }
+
+    .login-wrap {
+      background-color: rgba(184, 225, 241, 0.8);
+      padding: 40px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      color: #fff;
+      position: relative;
+      z-index: 1;
+    }
+
+    .heading-section {
+      color: #fff;
+      margin-bottom: 20px;
+      font-weight: 700;
+      font-size: 1.8em;
+    }
+
+    .form-control {
+      background: rgba(255, 255, 255, 0.8);
+      border: 2px solid #ffffff;
+      height: 40px;
+      color: #333;
+      border-radius: 8px;
+      padding: 0 10px;
+      margin-bottom: 15px;
+      width: 85%;
+    }
+
+    .form-control::placeholder {
+      color: #666;
+    }
+
+    .btn-primary {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 15px;
+      cursor: pointer;
+      width: 60%;
+      height: 40px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .btn-primary:hover {
+      background: #0056b3;
+    }
+
+    .register-link {
+      color: #007bff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .register-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Modal styling */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .modal-content {
+      background-color: rgba(184, 225, 241, 0.8);
+      padding: 40px;
+      border-radius: 15px;
+      width: 80%;
+      max-width: 400px;
+      text-align: left;
+    }
+
+    .modal h2 {
+      color: #ffffff;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .modal .form-control {
+      width: 90%;
+    }
+
+    .modal-label {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .important-field::after {
+      content: '*';
+      color: red;
+      margin-left: 3px;
+    }
+
+    .close-btn {
+      cursor: pointer;
+      color: #333;
+      float: right;
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-top: -10px;
+    }
+
+    /* Blur effect */
+    .blur {
+      filter: blur(5px);
+    }
+
+    .error-message {
+      color: red;
+      font-size: 0.9em;
+      display: none; /* Initially hidden */
+    }
+  </style>
+</head>
+<body>
+<section class="ftco-section">
+  <div class="login-wrap">
+    <h2 class="heading-section">Login</h2>
+    <div th:if="${msg}" class="alert alert-danger" role="alert">
+      <p th:text="${msg}" style="color:red"></p>
+    </div>
+    <form action="/student/login" class="signin-form">
+      <input type="text" name="user" class="form-control" placeholder="Username" required>
+      <input id="password-field" name="pass" type="password" class="form-control" placeholder="Password" required>
+      <button type="submit" class="btn btn-primary">Sign In</button>
+    </form>
+    <p>&mdash; Or &mdash;</p>
+    <p><a class="register-link" onclick="openModal()">Register</a></p>
+  </div>
+</section>
+
+<!-- Registration Modal -->
+<div class="modal" id="registerModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <h2>Register</h2>
+    <div id="registrationMessage" style="color: red; margin-bottom: 10px;"></div>
+    <form action="/student/register" method="POST" onsubmit="return validatePasswords()">
+      <label class="modal-label important-field">Name</label>
+      <input type="text" name="name" class="form-control" placeholder="Enter your name" required>
+
+      <label class="modal-label important-field">Roll Number</label>
+      <input type="text" name="rollno" class="form-control" placeholder="Enter your roll number" required>
+
+      <label class="modal-label important-field">Section</label>
+      <input type="text" name="section" class="form-control" placeholder="Enter your section" required>
+
+      <label class="modal-label important-field">Password</label>
+      <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+
+      <label class="modal-label important-field">Confirm Password</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm your password" required>
+      <p class="error-message" id="errorMessage">Passwords do not match</p>
+
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openModal() {
+    document.getElementById("registerModal").style.display = "flex";
+    document.querySelector(".login-wrap").classList.add("blur");
+  }
+
+  function closeModal() {
+    document.getElementById("registerModal").style.display = "none";
+    document.querySelector(".login-wrap").classList.remove("blur");
+  }
+
+  function validatePasswords() {
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const errorMessage = document.getElementById("errorMessage");
+    if (password !== confirmPassword) {
+      errorMessage.style.display = "block";
+      return false;
+    } else {
+      errorMessage.style.display = "none";
+      return true;
+    }
+  }
+</script>
+<script th:if="${registerMsg}" th:inline="javascript">
+  let alertMessage = [[${registerMsg}]];
+  alert(alertMessage);
+</script>
+</body>
+</html>

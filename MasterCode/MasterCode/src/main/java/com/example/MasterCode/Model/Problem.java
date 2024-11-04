@@ -15,6 +15,6 @@ public class Problem {
     private String description;
     private String link;
     @OneToMany
-    List<Answer> answers=new ArrayList<>();
+    private List<Answer> answers=new ArrayList<>();
 
 }

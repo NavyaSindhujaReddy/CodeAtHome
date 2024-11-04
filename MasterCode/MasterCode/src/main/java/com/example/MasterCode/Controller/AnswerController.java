@@ -8,15 +8,18 @@ import com.example.MasterCode.Repository.ProblemRepository;
 import com.example.MasterCode.Service.AnswerService;
 import com.example.MasterCode.Service.ProblemService;
 import com.example.MasterCode.Service.StudentService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 
@@ -30,20 +33,28 @@ public class AnswerController {
     @Autowired
     StudentService studentService;
        @PostMapping("/submit")
-        public String submitAnswer(
-              @RequestParam("imageData") MultipartFile imageFile,
-              @RequestParam("studentId") Long studentId,
-              @RequestParam("problemId") Long problemId) throws IOException {
-
-               Answer answer = new Answer();
-                answer.setImageData(imageFile.getBytes()); // Convert image file to byte array
-              Student student = studentService.findById(studentId).orElseThrow();
-              int c=student.getCount();
-              student.setCount(++c);
-               Problem problem = problemService.findById(problemId).orElseThrow();
-               answer.setStudent(student);
-               answer.setProblem(problem);
-               return answerService.save(answer);
+       public ModelAndView submitAnswer(@RequestParam("image") MultipartFile imageFile, @RequestParam("user") String studentId, @RequestParam("problemId") Long problemId, HttpServletRequest request) throws IOException {
+           Answer answer = new Answer();
+           byte[] imageBytes = imageFile.getBytes();
+           answer.setImageData(imageBytes);
+           Student student=studentService.findUser(studentId);
+           int c=student.getCount();
+           c++;
+           student.setCount(c);
+           Problem problem = problemService.findById(problemId).orElseThrow();
+           answer.setStudent(student);
+           answer.setProblem(problem);
+           answerService.save(answer);
+           studentService.add(student);
+           ModelAndView m=new ModelAndView();
+           String user=request.getParameter("user");
+           String name=studentService.findUserName(user);
+           m.setViewName("Dashboard");
+           m.addObject("name",name);
+           m.addObject("user",user);
+           List<Problem> p=problemService.findallproblems();
+           m.addObject("sp",p);
+           return m;
        }
     @GetMapping("/{problemId}/answers")
     public List<Answer>  getAnswers(@PathVariable Long problemId) {

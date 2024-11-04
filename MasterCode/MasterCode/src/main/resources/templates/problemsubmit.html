@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Problem</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        color: #333;
+    }
+
+    form {
+        background: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+    }
+
+    input[type="text"], input[type="url"], select, input[type="file"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    button {
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    .message {
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        color: #fff;
+    }
+
+    .success {
+        background-color: #28a745;
+    }
+
+    .error {
+        background-color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+<h1>Submit a Problem</h1>
+<form action="/answers/submit" method="post" enctype="multipart/form-data">
+  <p th:text="'Problem Id: '+${pid}"></p>
+  <input type="hidden" th:name="'problemId'" th:value="${pid}"/>
+  <input type="hidden" th:name="'user'" th:value="${user}"/>
+  <p th:text="'Problem Description: ' + (${p.description} != null ? ${p.description} : 'Description not available')"></p>
+  <p th:text="'Problem Link: ' + (${p.link} != null ? ${p.link} : 'Link not available')"></p>
+  <label for="image">Upload Image:</label>
+  <input type="file" id="image" name="image" accept="image/*" required />
+  <button type="submit">Submit</button>
+</form>
+</body>
+</html>

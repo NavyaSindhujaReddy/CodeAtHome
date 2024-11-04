@@ -18,9 +18,8 @@ public class StudentService {
     public Optional<Student> findById(Long id){
         return studentRepository.findById(id);
     }
-    public String add(Student student){
+    public void add(Student student){
         studentRepository.save(student);
-        return "success";
     }
     public int noOfProblems(Long studentid){
         return studentRepository.noOfProblems(studentid);
@@ -34,4 +33,16 @@ public class StudentService {
         studentRepository.updatePassword(user,password);
         return "Updated";
     }
+    public String findUserName(String roll)
+    {
+        return studentRepository.findUserName(roll);
+    }
+    public List<Student> findBySection(String section)
+    {
+        return studentRepository.findBySection(section);
+    }
+    public List<Student> sectionwiseStudents(String section){
+        return studentRepository.findBySectionWise(section);
+    }
+
 }
